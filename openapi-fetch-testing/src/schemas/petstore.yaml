@@ -1,0 +1,197 @@
+openapi: "3.1.0"
+info:
+  title: Petstore API
+  version: "1.0.0"
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      summary: ペット一覧を取得
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+        - name: species
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - dog
+              - cat
+              - bird
+      responses:
+        "200":
+          description: ペット一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createPet
+      summary: ペットを新規登録
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePetBody"
+      responses:
+        "201":
+          description: 作成されたペット
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+        "422":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /pets/{petId}:
+    get:
+      operationId: getPet
+      summary: ペット詳細を取得
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ペット詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+        "404":
+          description: ペットが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: updatePet
+      summary: ペット情報を更新
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePetBody"
+      responses:
+        "200":
+          description: 更新されたペット
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+        "404":
+          description: ペットが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      operationId: deletePet
+      summary: ペットを削除
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 削除成功
+        "404":
+          description: ペットが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+        - species
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        species:
+          type: string
+          enum:
+            - dog
+            - cat
+            - bird
+        age:
+          type: integer
+    CreatePetBody:
+      type: object
+      required:
+        - name
+        - species
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+          enum:
+            - dog
+            - cat
+            - bird
+        age:
+          type: integer
+    UpdatePetBody:
+      type: object
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+          enum:
+            - dog
+            - cat
+            - bird
+        age:
+          type: integer
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
