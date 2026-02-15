@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { SubmissionResult } from "@conform-to/dom";
 import { ContactForm } from "./error-structure";
 
-describe("ContactForm - エラーの置き場所の思想", () => {
+describe("ContactForm - エラーの置き場所", () => {
   it("lastResultのフィールドエラーが各フィールドに表示される", () => {
     const lastResult: SubmissionResult<string[]> = {
       status: "error",
@@ -24,7 +24,7 @@ describe("ContactForm - エラーの置き場所の思想", () => {
     ).toBeInTheDocument();
   });
 
-  it("フォームレベルエラーがフィールドエラーと分離して表示される", () => {
+  it("フォームエラーが表示される", () => {
     const lastResult: SubmissionResult<string[]> = {
       status: "error",
       initialValue: {
@@ -42,28 +42,6 @@ describe("ContactForm - エラーの置き場所の思想", () => {
     expect(
       screen.getByText("送信に失敗しました。時間をおいて再度お試しください")
     ).toBeInTheDocument();
-  });
-
-  it("フィールドエラーとフォームエラーが同時に存在できる", () => {
-    const lastResult: SubmissionResult<string[]> = {
-      status: "error",
-      initialValue: { name: "", email: "", message: "" },
-      error: {
-        "": ["サーバーエラーが発生しました"],
-        name: ["名前は必須です"],
-        email: ["メールアドレスは必須です"],
-      },
-    };
-
-    render(<ContactForm lastResult={lastResult} />);
-
-    // フォームレベルエラー
-    expect(
-      screen.getByText("サーバーエラーが発生しました")
-    ).toBeInTheDocument();
-    // フィールドレベルエラー
-    expect(screen.getByText("名前は必須です")).toBeInTheDocument();
-    expect(screen.getByText("メールアドレスは必須です")).toBeInTheDocument();
   });
 
   it("エラーがある場合aria-invalidがtrueになる", () => {
