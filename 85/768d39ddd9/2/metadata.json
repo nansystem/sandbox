@@ -1,0 +1,32 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "85768d39ddd9",
+  "session_id": "2ab88d95-c2d0-4a19-9c11-c3878eedc9f8",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-21T07:39:49.64783658Z",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "files_touched": [
+    ".git/hooks/post-checkout",
+    "package.json"
+  ],
+  "agent": "Claude Code",
+  "transcript_identifier_at_start": "4cbf5798-c661-4eeb-bd60-06dc567fc2e0",
+  "token_usage": {
+    "input_tokens": 43,
+    "cache_creation_tokens": 22353,
+    "cache_read_tokens": 1245558,
+    "output_tokens": 4800,
+    "api_call_count": 33
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-21T07:39:49.597708216Z",
+    "agent_lines": 7,
+    "human_added": 10148822,
+    "human_modified": 14,
+    "human_removed": 0,
+    "total_committed": 10148843,
+    "agent_percentage": 0.00006897337952710472
+  },
+  "transcript_path": ".claude/projects/-home-nancy-src-github-com-nansystem-sandbox/2ab88d95-c2d0-4a19-9c11-c3878eedc9f8.jsonl"
+}

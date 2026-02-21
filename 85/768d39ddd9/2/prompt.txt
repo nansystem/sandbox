@@ -1,0 +1,17 @@
+.git/hooks/post-checkoutをシンプルにしてgit worktreeコマンドを試し、そのあとにclaude -wを試したい
+
+---
+
+git worktree add時に、.git/hooks/post-checkoutが呼ばれることをまずは確認したい
+
+---
+
+この結果を/home/nancy/src/github.com/nansystem/nancy-blog-astro/src/content/blog/claude-code-parallel-development-with-worktree.mdにまずは反映して。
+
+---
+
+はい
+
+---
+
+次にダミーのpackage.jsonでなんらかの依存関係を書いておいて、同様にgit worktree時に自動でpnpm iできるか確認して
