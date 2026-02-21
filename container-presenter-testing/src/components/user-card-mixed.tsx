@@ -5,7 +5,7 @@
  * - Container/Presenterパターンとの対比用
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 export type FetchUser = () => Promise<{ name: string; email: string }>;
 
@@ -15,23 +15,32 @@ export function UserCardMixed({ fetchUser }: { fetchUser: FetchUser }) {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchUser();
-      setUser(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "不明なエラー");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchUser]);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    let ignore = false;
+    setIsLoading(true);
+    setError(null);
+
+    fetchUser().then(
+      (data) => {
+        if (!ignore) {
+          setUser(data);
+          setIsLoading(false);
+        }
+      },
+      (e) => {
+        if (!ignore) {
+          setError(e instanceof Error ? e.message : "不明なエラー");
+          setIsLoading(false);
+        }
+      },
+    );
+
+    return () => {
+      ignore = true;
+    };
+  }, [fetchUser, retryCount]);
 
   if (isLoading) {
     return <p>読み込み中...</p>;
@@ -41,7 +50,7 @@ export function UserCardMixed({ fetchUser }: { fetchUser: FetchUser }) {
     return (
       <div>
         <p role="alert">{error}</p>
-        <button onClick={load}>再試行</button>
+        <button onClick={() => setRetryCount((c) => c + 1)}>再試行</button>
       </div>
     );
   }
@@ -50,7 +59,7 @@ export function UserCardMixed({ fetchUser }: { fetchUser: FetchUser }) {
     <div>
       <h2>{user?.name}</h2>
       <p>{user?.email}</p>
-      <button onClick={load}>更新</button>
+      <button onClick={() => setRetryCount((c) => c + 1)}>更新</button>
     </div>
   );
 }

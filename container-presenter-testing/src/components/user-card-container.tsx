@@ -6,7 +6,7 @@
  * - Presenterにpropsを渡すだけ
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { UserCardPresenter } from "./user-card-presenter";
 
 export type FetchUser = () => Promise<{ name: string; email: string }>;
@@ -17,23 +17,32 @@ export function UserCardContainer({ fetchUser }: { fetchUser: FetchUser }) {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchUser();
-      setUser(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "不明なエラー");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchUser]);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    let ignore = false;
+    setIsLoading(true);
+    setError(null);
+
+    fetchUser().then(
+      (data) => {
+        if (!ignore) {
+          setUser(data);
+          setIsLoading(false);
+        }
+      },
+      (e) => {
+        if (!ignore) {
+          setError(e instanceof Error ? e.message : "不明なエラー");
+          setIsLoading(false);
+        }
+      },
+    );
+
+    return () => {
+      ignore = true;
+    };
+  }, [fetchUser, retryCount]);
 
   return (
     <UserCardPresenter
@@ -41,7 +50,7 @@ export function UserCardContainer({ fetchUser }: { fetchUser: FetchUser }) {
       email={user?.email ?? ""}
       isLoading={isLoading}
       error={error}
-      onRefresh={load}
+      onRefresh={() => setRetryCount((c) => c + 1)}
     />
   );
 }
